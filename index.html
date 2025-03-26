@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Gehaltsrechner</title>
+    <title>Gehaltsrechner – Jahresbrutto</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
     <div class="bg-white shadow-2xl rounded-2xl p-8 w-full max-w-xl">
-      <h1 class="text-2xl font-bold text-center mb-6">Gehaltsrechner (Deutschland)</h1>
+      <h1 class="text-2xl font-bold text-center mb-6">Gehaltsrechner (Jahresbrutto)</h1>
 
       <div class="space-y-4">
         <div>
-          <label class="font-semibold">Bruttogehalt (monatlich in EUR)</label>
-          <input type="number" id="brutto" class="mt-1 w-full p-2 border rounded" />
+          <label class="font-semibold">Bruttogehalt (jährlich in EUR)</label>
+          <input type="number" id="jahresbrutto" class="mt-1 w-full p-2 border rounded" />
         </div>
 
         <div>
@@ -29,46 +29,11 @@
         </div>
 
         <div>
-          <label class="font-semibold">Bundesland</label>
-          <select id="bundesland" class="mt-1 w-full p-2 border rounded">
-            <option value="BW">Baden-Württemberg</option>
-            <option value="BY">Bayern</option>
-            <option value="BE">Berlin</option>
-            <option value="BB">Brandenburg</option>
-            <option value="HB">Bremen</option>
-            <option value="HH">Hamburg</option>
-            <option value="HE">Hessen</option>
-            <option value="MV">Mecklenburg-Vorpommern</option>
-            <option value="NI">Niedersachsen</option>
-            <option value="NW">Nordrhein-Westfalen</option>
-            <option value="RP">Rheinland-Pfalz</option>
-            <option value="SL">Saarland</option>
-            <option value="SN">Sachsen</option>
-            <option value="ST">Sachsen-Anhalt</option>
-            <option value="SH">Schleswig-Holstein</option>
-            <option value="TH">Thüringen</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="font-semibold">Krankenversicherungsart</label>
-          <select id="kv" class="mt-1 w-full p-2 border rounded">
-            <option value="gesetzlich">Gesetzlich</option>
-            <option value="privat">Privat</option>
-          </select>
-        </div>
-
-        <div>
           <label class="font-semibold">Kirchensteuerpflichtig</label>
           <select id="kirche" class="mt-1 w-full p-2 border rounded">
             <option value="ja">Ja</option>
             <option value="nein">Nein</option>
           </select>
-        </div>
-
-        <div>
-          <label class="font-semibold">Anzahl Kinderfreibeträge</label>
-          <input type="number" id="kinder" min="0" step="0.5" class="mt-1 w-full p-2 border rounded" />
         </div>
 
         <button onclick="berechneNetto()" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mt-4">Berechnen</button>
@@ -79,28 +44,30 @@
 
     <script>
       function berechneNetto() {
-        const brutto = parseFloat(document.getElementById("brutto").value);
-        const steuerklasse = document.getElementById("steuerklasse").value;
+        const jahresbrutto = parseFloat(document.getElementById("jahresbrutto").value);
         const kirche = document.getElementById("kirche").value;
 
-        if (isNaN(brutto)) {
-          alert("Bitte gib ein gültiges Bruttogehalt ein.");
+        if (isNaN(jahresbrutto)) {
+          alert("Bitte gib ein gültiges Jahresbruttogehalt ein.");
           return;
         }
 
-        let lohnsteuer = brutto * 0.20;
-        let soli = brutto * 0.01;
+        const monatsbrutto = jahresbrutto / 12;
+
+        let lohnsteuer = monatsbrutto * 0.20;
+        let soli = monatsbrutto * 0.01;
         let kirchensteuer = kirche === "ja" ? lohnsteuer * 0.09 : 0;
-        let rentenversicherung = brutto * 0.093;
-        let krankenversicherung = brutto * 0.073;
-        let arbeitslosenversicherung = brutto * 0.012;
-        let pflegeversicherung = brutto * 0.01525;
+        let rentenversicherung = monatsbrutto * 0.093;
+        let krankenversicherung = monatsbrutto * 0.073;
+        let arbeitslosenversicherung = monatsbrutto * 0.012;
+        let pflegeversicherung = monatsbrutto * 0.01525;
 
         const abzüge = lohnsteuer + soli + kirchensteuer + rentenversicherung + krankenversicherung + arbeitslosenversicherung + pflegeversicherung;
-        const netto = brutto - abzüge;
+        const monatsnetto = monatsbrutto - abzüge;
 
         document.getElementById("ergebnis").innerHTML = `
-          <p><strong>Nettogehalt:</strong> ${netto.toFixed(2)} EUR</p>
+          <p><strong>Monatliches Bruttogehalt:</strong> ${monatsbrutto.toFixed(2)} EUR</p>
+          <p><strong>Monatliches Nettogehalt:</strong> ${monatsnetto.toFixed(2)} EUR</p>
           <hr class="my-2" />
           <p>Lohnsteuer: ${lohnsteuer.toFixed(2)} EUR</p>
           <p>Solidaritätszuschlag: ${soli.toFixed(2)} EUR</p>
